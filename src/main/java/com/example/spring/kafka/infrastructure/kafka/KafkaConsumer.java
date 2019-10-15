@@ -1,4 +1,4 @@
-package com.example.spring.kafka.infrastructure;
+package com.example.spring.kafka.infrastructure.kafka;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
