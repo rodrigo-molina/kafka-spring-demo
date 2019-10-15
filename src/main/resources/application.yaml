@@ -1,0 +1,7 @@
+server:
+  port: 8090
+
+kafka.broker: localhost:9092
+kafka.group-id: sink-connector
+kafka.topic: my-topic
+
