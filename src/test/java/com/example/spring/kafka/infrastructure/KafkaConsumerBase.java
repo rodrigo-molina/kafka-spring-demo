@@ -1,6 +1,7 @@
 package com.example.spring.kafka.infrastructure;
 
-import com.example.spring.kafka.infrastructure.kafka.KafkaConsumer;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Before;
@@ -18,6 +19,9 @@ import java.util.Map;
 import static org.springframework.kafka.test.utils.ContainerTestUtils.waitForAssignment;
 
 public abstract class KafkaConsumerBase {
+
+    protected static final ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+
     private final static String CONSUMER_TOPIC = "my-topic-test";
 
     private KafkaTemplate<String, String> template;
@@ -57,6 +61,10 @@ public abstract class KafkaConsumerBase {
         senderProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
         return senderProperties;
+    }
+
+    public ListAppender<ILoggingEvent> getListAppender() {
+        return this.listAppender;
     }
 
 }
