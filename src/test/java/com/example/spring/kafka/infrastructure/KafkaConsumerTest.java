@@ -1,6 +1,7 @@
 package com.example.spring.kafka.infrastructure;
 
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -9,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -29,7 +29,7 @@ public class KafkaConsumerTest extends KafkaConsumerBase {
 
     @Before
     public void setUp() {
-        givenLoggerFor(KafkaConsumer.class);
+        givenLoggerFor(KafkaConsumer.class, LIST_APPENDER);
     }
 
     @Test
@@ -41,11 +41,11 @@ public class KafkaConsumerTest extends KafkaConsumerBase {
         thenThereIsALogWith(Level.INFO, "[Kafka Consumer] Message Received [ Hello Spring Kafka Receiver! ]");
     }
 
-    private void givenLoggerFor(final Class clazz) {
+    private void givenLoggerFor(final Class clazz, final ListAppender<ILoggingEvent> appender) {
         final Logger fooLogger = (Logger) LoggerFactory.getLogger(clazz);
-        fooLogger.addAppender(LIST_APPENDER);
+        fooLogger.addAppender(appender);
 
-        LIST_APPENDER.start();
+        appender.start();
     }
 
     private void thenThereIsALogWith(final Level level, final String loggedMessage) {
@@ -53,6 +53,6 @@ public class KafkaConsumerTest extends KafkaConsumerBase {
         final Predicate<ILoggingEvent> levelsAreEqual = m -> level.equals(m.getLevel());
         final Predicate<ILoggingEvent> messagesAreEqual = m -> loggedMessage.equals(m.getMessage());
 
-        assertThat(list).anyMatch(messagesAreEqual);
+        assertThat(list).anyMatch(levelsAreEqual.and(messagesAreEqual));
     }
 }
