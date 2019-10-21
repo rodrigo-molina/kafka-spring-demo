@@ -48,14 +48,11 @@ public class KafkaConsumerTest extends KafkaConsumerBase {
         LIST_APPENDER.start();
     }
 
-
     private void thenThereIsALogWith(final Level level, final String loggedMessage) {
         final List<ILoggingEvent> list = LIST_APPENDER.list;
         final Predicate<ILoggingEvent> levelsAreEqual = m -> level.equals(m.getLevel());
         final Predicate<ILoggingEvent> messagesAreEqual = m -> loggedMessage.equals(m.getMessage());
 
-        assertThat(list).allMatch(messagesAreEqual);
-
-
+        assertThat(list).anyMatch(messagesAreEqual);
     }
 }
