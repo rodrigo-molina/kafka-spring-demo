@@ -36,11 +36,6 @@ public abstract class KafkaConsumerBase {
     @ClassRule
     public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, CONSUMER_TOPIC);
 
-    @BeforeClass
-    public static void setup() {
-        System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getEmbeddedKafka().getBrokersAsString());
-    }
-
     @Before
     public void setUp() {
         final Map<String, Object> senderProperties = KafkaTestUtils
