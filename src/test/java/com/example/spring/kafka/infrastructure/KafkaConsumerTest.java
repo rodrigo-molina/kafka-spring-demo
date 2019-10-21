@@ -16,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,16 +25,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @TestPropertySource("classpath:application-test.yml")
 public class KafkaConsumerTest extends KafkaConsumerBase {
-
-
     public static final ListAppender<ILoggingEvent> LIST_APPENDER = new ListAppender<>();
 
     @Before
     public void setUp() {
-        final Logger fooLogger = (Logger) LoggerFactory.getLogger(KafkaConsumer.class);
-        fooLogger.addAppender(LIST_APPENDER);
-
-        LIST_APPENDER.start();
+        givenLoggerFor(KafkaConsumer.class);
     }
 
     @Test
@@ -42,8 +38,24 @@ public class KafkaConsumerTest extends KafkaConsumerBase {
         final String greeting = "Hello Spring Kafka Receiver!";
         givenMessage(key, greeting);
 
-        List<ILoggingEvent> list = LIST_APPENDER.list;
-        Level level = Level.INFO;
-        assertThat(list).allMatch(message -> "[INFO] [Kafka Consumer] Message Received [ Hello Spring Kafka Receiver! ]".equals(message.getMessage()) && level.equals(message.getMessage()));
+        thenThereIsALogWith(Level.INFO, "[Kafka Consumer] Message Received [ Hello Spring Kafka Receiver! ]");
+    }
+
+    private void givenLoggerFor(final Class clazz) {
+        final Logger fooLogger = (Logger) LoggerFactory.getLogger(clazz);
+        fooLogger.addAppender(LIST_APPENDER);
+
+        LIST_APPENDER.start();
+    }
+
+
+    private void thenThereIsALogWith(final Level level, final String loggedMessage) {
+        final List<ILoggingEvent> list = LIST_APPENDER.list;
+        final Predicate<ILoggingEvent> levelsAreEqual = m -> level.equals(m.getLevel());
+        final Predicate<ILoggingEvent> messagesAreEqual = m -> loggedMessage.equals(m.getMessage());
+
+        assertThat(list).allMatch(messagesAreEqual);
+
+
     }
 }
