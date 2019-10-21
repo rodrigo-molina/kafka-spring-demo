@@ -29,7 +29,7 @@ public abstract class KafkaConsumerBase {
     public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, CONSUMER_TOPIC);
 
     @Before
-    public void setUp() {
+    public void setUpBase() {
         final Map<String, Object> senderProperties = getKafkaConfig();
         final ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory(senderProperties);
 
