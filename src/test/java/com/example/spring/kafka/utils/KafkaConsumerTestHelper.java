@@ -2,20 +2,26 @@ package com.example.spring.kafka.utils;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 import static org.springframework.kafka.test.utils.ContainerTestUtils.waitForAssignment;
 
+@Component
 public class KafkaConsumerTestHelper {
 
-    public static KafkaTemplate<String, String> enableConsumerSupport(final String topic, KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry, EmbeddedKafkaRule embeddedKafka) {
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+
+    public KafkaTemplate<String, String> enableConsumerSupport(final String topic, final EmbeddedKafkaRule embeddedKafka) {
         final Map<String, Object> senderProperties = getKafkaConfig(embeddedKafka);
         final ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory(senderProperties);
 
@@ -27,12 +33,12 @@ public class KafkaConsumerTestHelper {
         return kafkaTemplate;
     }
 
-    private static void waitUntilPartitionsAreAssigned(KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry, EmbeddedKafkaRule embeddedKafka) {
+    private void waitUntilPartitionsAreAssigned(KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry, EmbeddedKafkaRule embeddedKafka) {
         kafkaListenerEndpointRegistry.getListenerContainers().stream()
                 .forEach(messageListenerContainer -> waitForAssignment(messageListenerContainer, embeddedKafka.getEmbeddedKafka().getPartitionsPerTopic()));
     }
 
-    private static Map<String, Object> getKafkaConfig(EmbeddedKafkaRule embeddedKafka) {
+    private Map<String, Object> getKafkaConfig(EmbeddedKafkaRule embeddedKafka) {
         final Map<String, Object> senderProperties = KafkaTestUtils.senderProps(embeddedKafka.getEmbeddedKafka().getBrokersAsString());
         senderProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 

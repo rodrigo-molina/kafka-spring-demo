@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.yml")
-public class KafkaConsumerTest extends KafkaConsumerBase implements LogSteps, KafkaGivenSupport {
+public class KafkaConsumerTest extends AbstractBaseTest implements LogSteps, KafkaGivenSupport {
 
     @Before
     public void setUp() {
