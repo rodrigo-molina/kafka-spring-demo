@@ -43,6 +43,10 @@ public abstract class KafkaConsumerBase {
         waitUntilPartitionsAreAssigned();
     }
 
+    public ListAppender<ILoggingEvent> getListAppender() {
+        return this.listAppender;
+    }
+
     public void givenMessage(final String key, final String value) {
         try {
             template.sendDefault(key, value).get();
@@ -61,10 +65,6 @@ public abstract class KafkaConsumerBase {
         senderProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
         return senderProperties;
-    }
-
-    public ListAppender<ILoggingEvent> getListAppender() {
-        return this.listAppender;
     }
 
 }
