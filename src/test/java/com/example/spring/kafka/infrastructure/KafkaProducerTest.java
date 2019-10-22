@@ -1,9 +1,9 @@
 package com.example.spring.kafka.infrastructure;
 
 import com.example.spring.kafka.infrastructure.kafka.KafkaProducer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -48,7 +48,7 @@ public class KafkaProducerTest {
     @Before
     public void setUp() {
         final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(embeddedKafka.getEmbeddedKafka().getBrokersAsString(), "sender", "false");
-        consumerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
         final DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory(consumerProperties);
 

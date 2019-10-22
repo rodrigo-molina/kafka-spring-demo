@@ -24,7 +24,7 @@ public abstract class KafkaConsumerBase {
 
     private final static String CONSUMER_TOPIC = "my-topic-test";
 
-    private KafkaTemplate<String, String> template;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
@@ -34,25 +34,26 @@ public abstract class KafkaConsumerBase {
 
     @Before
     public void setUpBase() {
-        final Map<String, Object> senderProperties = getKafkaConfig();
-        final ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory(senderProperties);
-
-        template = new KafkaTemplate(producerFactory);
-        template.setDefaultTopic(CONSUMER_TOPIC);
-
-        waitUntilPartitionsAreAssigned();
+        enableConsumerSupport();
     }
+
 
     public ListAppender<ILoggingEvent> getListAppender() {
         return this.listAppender;
     }
 
-    public void givenMessage(final String key, final String value) {
-        try {
-            template.sendDefault(key, value).get();
-        } catch (Exception e) {
-            throw new RuntimeException("Error while sending message and waiting for kafka commit", e);
-        }
+    public KafkaTemplate<String, String> getKafkaTemplate() {
+        return kafkaTemplate;
+    }
+
+    private void enableConsumerSupport() {
+        final Map<String, Object> senderProperties = getKafkaConfig();
+        final ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory(senderProperties);
+
+        kafkaTemplate = new KafkaTemplate(producerFactory);
+        kafkaTemplate.setDefaultTopic(CONSUMER_TOPIC);
+
+        waitUntilPartitionsAreAssigned();
     }
 
     private void waitUntilPartitionsAreAssigned() {
