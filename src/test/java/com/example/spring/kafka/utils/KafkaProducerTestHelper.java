@@ -27,9 +27,8 @@ public class KafkaProducerTestHelper {
         final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(embeddedKafka.getEmbeddedKafka().getBrokersAsString(), "sender", "false");
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
-        final DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory(consumerProperties);
-
         final ContainerProperties containerProperties = new ContainerProperties(topic);
+        final DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory(consumerProperties);
 
         records = new LinkedBlockingQueue<>();
 
