@@ -1,8 +1,8 @@
-package com.example.spring.kafka.utils;
+package com.example.spring.kafka.utils.steps;
 
 import org.springframework.kafka.core.KafkaTemplate;
 
-public interface KafkaGivenSupport {
+public interface KafkaGivenSteps {
     KafkaTemplate<String, String> getKafkaTemplate();
 
     default void givenMessage(final String key, final String value) {

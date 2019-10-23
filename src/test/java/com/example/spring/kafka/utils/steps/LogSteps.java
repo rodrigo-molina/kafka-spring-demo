@@ -1,4 +1,4 @@
-package com.example.spring.kafka.utils;
+package com.example.spring.kafka.utils.steps;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

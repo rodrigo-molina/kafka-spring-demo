@@ -3,31 +3,44 @@ package com.example.spring.kafka.infrastructure;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.example.spring.kafka.utils.KafkaConsumerTestHelper;
+import com.example.spring.kafka.utils.KafkaProducerTestHelper;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 
+import java.util.concurrent.BlockingQueue;
+
 public abstract class AbstractBaseTest {
 
     protected static final ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
 
-    private final static String CONSUMER_TOPIC = "my-topic-test";
+    private final static String TOPIC = "my-topic-test";
 
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     private KafkaConsumerTestHelper kafkaConsumerTestHelper;
 
+    @Autowired
+    private KafkaProducerTestHelper kafkaProducerTestHelper;
+
     @ClassRule
-    public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, CONSUMER_TOPIC);
+    public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, TOPIC);
 
     @Before
     public void setUpBase() {
-        kafkaTemplate = kafkaConsumerTestHelper.enableConsumerSupport(CONSUMER_TOPIC, embeddedKafka);
+        kafkaTemplate = kafkaConsumerTestHelper.enableConsumerSupport(TOPIC, embeddedKafka);
+        kafkaProducerTestHelper.enableProducerSupport(TOPIC, embeddedKafka);
     }
 
+    @After
+    public void tearDownBase() {
+        kafkaProducerTestHelper.tearDown();
+    }
 
     public ListAppender<ILoggingEvent> getListAppender() {
         return this.listAppender;
@@ -37,5 +50,8 @@ public abstract class AbstractBaseTest {
         return kafkaTemplate;
     }
 
+    public BlockingQueue<ConsumerRecord<String, String>> getRecords() {
+        return this.kafkaProducerTestHelper.getRecords();
+    }
 
 }
