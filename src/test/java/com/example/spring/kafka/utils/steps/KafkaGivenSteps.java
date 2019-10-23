@@ -2,10 +2,10 @@ package com.example.spring.kafka.utils.steps;
 
 import org.springframework.kafka.core.KafkaTemplate;
 
-public interface KafkaGivenSteps {
-    KafkaTemplate<String, String> getKafkaTemplate();
+public interface KafkaGivenSteps<K, V> {
+    KafkaTemplate<K, V> getKafkaTemplate();
 
-    default void givenMessage(final String key, final String value) {
+    default void givenMessage(final K key, final V value) {
         try {
             getKafkaTemplate().sendDefault(key, value).get();
         } catch (Exception e) {
