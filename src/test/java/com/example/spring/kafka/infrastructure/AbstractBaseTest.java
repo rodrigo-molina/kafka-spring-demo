@@ -15,12 +15,8 @@ import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import java.util.concurrent.BlockingQueue;
 
 public abstract class AbstractBaseTest {
-
+    protected static final String TOPIC = "my-topic-test";
     protected static final ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-
-    private final static String TOPIC = "my-topic-test";
-
-    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     private KafkaConsumerTestHelper kafkaConsumerTestHelper;
@@ -33,7 +29,7 @@ public abstract class AbstractBaseTest {
 
     @Before
     public void setUpBase() {
-        kafkaTemplate = kafkaConsumerTestHelper.enableConsumerSupport(TOPIC, embeddedKafka);
+        kafkaConsumerTestHelper.enableConsumerSupport(TOPIC, embeddedKafka);
         kafkaProducerTestHelper.enableProducerSupport(TOPIC, embeddedKafka);
     }
 
@@ -47,7 +43,7 @@ public abstract class AbstractBaseTest {
     }
 
     public KafkaTemplate<String, String> getKafkaTemplate() {
-        return kafkaTemplate;
+        return this.kafkaConsumerTestHelper.getKafkaTemplate();
     }
 
     public BlockingQueue<ConsumerRecord<String, String>> getRecords() {

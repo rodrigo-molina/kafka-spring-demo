@@ -20,12 +20,17 @@ public class KafkaConsumerTestHelper {
 
     @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    public KafkaTemplate<String, String> getKafkaTemplate() {
+        return kafkaTemplate;
+    }
 
     public KafkaTemplate<String, String> enableConsumerSupport(final String topic, final EmbeddedKafkaRule embeddedKafka) {
         final Map<String, Object> senderProperties = getKafkaConfig(embeddedKafka);
         final ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory(senderProperties);
 
-        final KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate(producerFactory);
+        kafkaTemplate = new KafkaTemplate(producerFactory);
         kafkaTemplate.setDefaultTopic(topic);
 
         waitUntilPartitionsAreAssigned(kafkaListenerEndpointRegistry, embeddedKafka);
